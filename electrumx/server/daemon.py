@@ -256,9 +256,6 @@ class Daemon:
             args = (block_count, estimate_mode)
         else:
             args = (block_count, )
-        if await self._is_rpc_available('estimatesmartfee'):
-            estimate = await self._send_single('estimatesmartfee', args)
-            return estimate.get('feerate', -1)
         return await self._send_single('estimatefee', args)
 
     async def getnetworkinfo(self):
