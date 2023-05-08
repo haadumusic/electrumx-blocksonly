@@ -23,15 +23,15 @@ RUN apt-get update \
         librocksdb5.17 libsnappy1v5 libbz2-1.0 zlib1g liblz4-1 \
     && rm -rf /var/lib/apt/lists/*
 
-ENV SERVICES="tcp://:50001"
-ENV COIN=Bitcoin
+ENV SERVICES="ssl://:50002"
+ENV COIN=BitcoinSegwit
 ENV DB_DIRECTORY=/var/lib/electrumx
-ENV DAEMON_URL="http://username:password@hostname:port/"
+ENV DAEMON_URL="http://electrum:electrum@192.168.1.4:8332/"
 ENV ALLOW_ROOT=true
 ENV DB_ENGINE=rocksdb
-ENV MAX_SEND=10000000
-ENV BANDWIDTH_UNIT_COST=50000
-ENV CACHE_MB=2000
+ENV PEER_DISCOVERY=self
+ENV SSL_CERTFILE="/var/lib/electrumx/electrumx.crt"
+ENV SSL_KEYFILE="/var/lib/electrumx/electrumx.key"
 
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app .
@@ -40,9 +40,11 @@ VOLUME /var/lib/electrumx
 
 RUN mkdir -p "$DB_DIRECTORY" && ulimit -n 1048576
 
+EXPOSE 50002
+
 CMD ["/usr/src/app/venv/bin/python", "/usr/src/app/venv/bin/electrumx_server"]
 
-# build it with eg.: `docker build -t electrumx .`
+# build it with eg.: `docker build -t blocksonly .`
 # run it with eg.:
-# `docker run -d --net=host -v /home/electrumx/db/:/var/lib/electrumx -e DAEMON_URL="http://youruser:yourpass@localhost:8332" -e REPORT_SERVICES=tcp://example.com:50001 electrumx`
+# `docker run -d -v /Users/boss/.electrumx:/var/lib/electrumx -p 50002:50002 blocksonly`
 # for a clean shutdown, send TERM signal to the running container eg.: `docker kill --signal="TERM" CONTAINER_ID`
