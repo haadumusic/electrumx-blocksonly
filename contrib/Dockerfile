@@ -11,10 +11,13 @@ RUN apt-get update \
         librocksdb-dev libsnappy-dev libbz2-dev libz-dev liblz4-dev \
     && rm -rf /var/lib/apt/lists/*
 
-RUN python -m venv venv \
-    && venv/bin/pip install --no-cache-dir e-x[rapidjson,rocksdb]==1.16.0
+RUN python -m venv venv
 
-
+RUN venv/bin/pip install --no-cache-dir aiohttp pylru plyvel websockets python-rocksdb uvloop aiorpcx && \
+    git clone https://github.com/haadumusic/electrumx-blocksonly.git && \
+    cd electrumx-blocksonly && \
+    python setup.py install
+    
 FROM python:3.9.4-slim-buster
 
 # Install the libs needed by rocksdb (no development headers or statics)
@@ -23,6 +26,7 @@ RUN apt-get update \
         librocksdb5.17 libsnappy1v5 libbz2-1.0 zlib1g liblz4-1 \
     && rm -rf /var/lib/apt/lists/*
 
+ENV EVENT_LOOP_POLICY uvloop
 ENV SERVICES="ssl://:50002"
 ENV COIN=BitcoinSegwit
 ENV DB_DIRECTORY=/var/lib/electrumx
@@ -42,7 +46,7 @@ RUN mkdir -p "$DB_DIRECTORY" && ulimit -n 1048576
 
 EXPOSE 50002
 
-CMD ["/usr/src/app/venv/bin/python", "/usr/src/app/venv/bin/electrumx_server"]
+CMD ["/usr/src/app/venv/bin/python", "/usr/src/app/electrumx-blocksonly/electrumx_server"]
 
 # build it with eg.: `docker build -t blocksonly .`
 # run it with eg.:
