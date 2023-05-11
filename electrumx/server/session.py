@@ -1350,6 +1350,9 @@ class ElectrumX(SessionBase):
         number: the number of blocks
         mode: CONSERVATIVE or ECONOMICAL estimation mode
         '''
+
+        return -1
+        
         number = non_negative_integer(number)
         # use whitelist for mode, otherwise it would be easy to force a cache miss:
         if mode not in self.coin.ESTIMATEFEE_MODES:
