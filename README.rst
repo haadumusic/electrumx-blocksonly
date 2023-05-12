@@ -1,20 +1,13 @@
-.. image:: https://api.cirrus-ci.com/github/spesmilo/electrumx.svg?branch=master
-    :target: https://cirrus-ci.com/github/spesmilo/electrumx
-.. image:: https://coveralls.io/repos/github/spesmilo/electrumx/badge.svg
-    :target: https://coveralls.io/github/spesmilo/electrumx
+Mods to ElectrumX to support blocksonly mode where estimatesmartfee is disabled. This is needed due to mempool spam created
+by ordinals craze
 
-===============================================
-ElectrumX-blocksonly - Reimplementation of electrum-server
-===============================================
+Check out daemon.py where I stub out the method to return -1. This will keep the electrum client happy
 
-  :Licence: MIT
-  :Language: Python (>= 3.8)
-  :Original Author: Neil Booth
 
-Slight modification to support blocksonly mode
+async def estimatefee(self, block_count, estimate_mode=None):
+        await asyncio.sleep(0.001)
+        return -1
 
-Documentation
-=============
 
-See `readthedocs <https://electrumx-spesmilo.readthedocs.io/>`_.
 
+Also, fixed DockerFile to get it to build correctly

@@ -252,11 +252,19 @@ class Daemon:
         currency units per KB, e.g. 0.00000995, or -1 if no estimate
         is available.
         '''
-        if estimate_mode:
-            args = (block_count, estimate_mode)
-        else:
-            args = (block_count, )
-        return await self._send_single('estimatefee', args)
+
+        await asyncio.sleep(0.001)
+        return -1
+    
+        #if estimate_mode:
+        #    args = (block_count, estimate_mode)
+        #else:
+        #    args = (block_count, )
+
+        #if await self._is_rpc_available('estimatesmartfee'):
+        #    estimate = await self._send_single('estimatesmartfee', args)
+        #    return estimate.get('feerate', -1)
+        #return await self._send_single('estimatefee', args)
 
     async def getnetworkinfo(self):
         '''Return the result of the 'getnetworkinfo' RPC call.'''

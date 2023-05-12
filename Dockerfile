@@ -13,11 +13,11 @@ RUN apt-get update \
 
 RUN python -m venv venv
 
-COPY . /
+COPY . .
+#RUN ls -la /usr/src/app
 
 RUN venv/bin/pip install --no-cache-dir aiohttp pylru plyvel websockets python-rocksdb uvloop aiorpcx && \
-    cd electrumx-blocksonly && \
-    python setup.py install
+    venv/bin/python setup.py install
     
 FROM python:3.9.4-slim-buster
 
@@ -27,6 +27,7 @@ RUN apt-get update \
         librocksdb5.17 libsnappy1v5 libbz2-1.0 zlib1g liblz4-1 \
     && rm -rf /var/lib/apt/lists/*
 
+ENV LOG_LEVEL error
 ENV EVENT_LOOP_POLICY uvloop
 ENV SERVICES="ssl://:50002"
 ENV COIN=BitcoinSegwit
@@ -47,7 +48,7 @@ RUN mkdir -p "$DB_DIRECTORY" && ulimit -n 1048576
 
 EXPOSE 50002
 
-CMD ["/usr/src/app/venv/bin/python", "/usr/src/app/electrumx-blocksonly/electrumx_server"]
+CMD ["/usr/src/app/venv/bin/python", "/usr/src/app/electrumx_server"]
 
 # build it with eg.: `docker build -t blocksonly .`
 # run it with eg.:
